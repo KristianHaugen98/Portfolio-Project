@@ -1,0 +1,25 @@
+* {
+  background-color: #f9fafb;
+}
+
+.hero {
+  padding: 3rem 0;
+  background-color: white;
+}
+.about {
+  padding: 3rem 0;
+  background-color: white;
+}
+
+img {
+  width: 400px;
+  height: 300px;
+  object-fit: cover;
+}
+.title {
+  font-family: "Roboto", sans-serif;
+}
+
+.card-img-top {
+  object-fit: contain;
+}
