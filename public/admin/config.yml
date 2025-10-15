@@ -2,7 +2,6 @@ backend:
   name: github
   repo: kristianhaugen98/portfolio-project
   branch: main
-  base_url: http://127.0.0.1:5500/
 media_folder: "public/images/uploads"
 collections:
   - name: "hero"
