@@ -4,11 +4,13 @@
 
 .hero {
   padding: 3rem 0;
-  background-color: white;
 }
 .about {
   padding: 3rem 0;
-  background-color: white;
+}
+
+section {
+  box-shadow: 0 2px 8px rgb(0, 0, 0, 0.1);
 }
 
 img {
@@ -22,4 +24,9 @@ img {
 
 .card-img-top {
   object-fit: contain;
+}
+
+.footer {
+  background-color: #adb5bd;
+  color: #333;
 }

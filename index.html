@@ -17,7 +17,7 @@
       <!-- Content for left side -->
       <div class="container">
         <div class="row align-items-center">
-          <div class="col-md-6 text-center text-md-start">
+          <div class="col-md-6 text-center text-md-start py-2">
             <h1 class="title">
               <br />Hi!<br />
               My name is <br /><strong>Kristian Haugen</strong><br />
@@ -26,8 +26,15 @@
               Front-End Developer with passion for clean design <br />and
               user-friendly web experience
             </p>
-            <button type="button" class="btn btn-primary">View my work</button>
-            <button type="button" class="btn btn-light">Download CV</button>
+            <a href="#projects" class="btn btn-primary">View my work</a>
+            <a
+              href="/assets/CV Kristian Haugen 2025 Oppdatert.pdf"
+              class="btn btn-light"
+              target="_blank"
+              rel="noopener"
+              download
+              >Download CV</a
+            >
           </div>
           <div class="col-md-6 text-center">
             <!-- Content for right side -->
@@ -54,14 +61,16 @@
             <h2 class="title">About Me:</h2>
             <p>
               I`m a Front-End student at Noroff who enjoys creating interactive
-              and responsive web experiences using HTML, CSS (Bootstrap)
-              JavaScript. I´m dedicated to writing code that not only looks
-              good, but also performs smoothly across all devices. I love to
-              develop and see the creation of it. <br />
+              and responsive web experiences. I´m dedicated to writing code that
+              not only looks good, but also performs smoothly across all
+              devices. I love to develop and see the creation of it. <br />
               My goal is to make technologies that does good things to the
               world. I´m also an active person who loves to work out and take
-              care of my body with good work / life balance. “Only live once,
-              make it count”
+              care of my body with good work / life balance. <br />
+              I`m currently working as an "shop assistan" who have expertice in
+              computer and mobile / tablets. <br />
+              Where i sell those product as well as helping customers with
+              related stuff.
             </p>
             <p class="text-center p-3"></p>
             <h2>My skills:</h2>
@@ -113,13 +122,13 @@
         </div>
       </div>
     </section>
-    <section class="projects py-5">
+    <section class="projects py-5" id="projects">
       <h2 class="title text-center">Projects</h2>
       <div class="container">
         <div class="row g-4 justify-content-center">
           <!-- card 1 -->
           <div class="col-12 col-md-4">
-            <div class="card" style="width: 100%">
+            <div class="card shadow-lg" style="width: 100%">
               <img
                 src="/images/shoppingcart.png"
                 class="card-img-top img-fluid"
@@ -129,16 +138,22 @@
               <div class="card-body">
                 <h5 class="card-title">Game Hub</h5>
                 <p class="card-text">
-                  E-Commerce project using Wordpress, and fetch product using
-                  JavaScript`s fetch function.
+                  E-Commerce project from school using Wordpress, and fetch
+                  product using JavaScript`s fetch function.
                 </p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <a
+                  href="https://kristiansfirstwebsite.netlify.app/"
+                  class="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  >Go to website</a
+                >
               </div>
             </div>
           </div>
           <!-- card 2 -->
           <div class="col-12 col-md-4">
-            <div class="card" style="width: 100%">
+            <div class="card shadow-lg" style="width: 100%">
               <img
                 src="/images/youtube.png"
                 class="card-img-top img-fluid"
@@ -151,17 +166,101 @@
                   Besides studying and working, I also love to play video games
                   and make gameplays.
                 </p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <a
+                  href="https://www.youtube.com/@MrPartyGamer"
+                  class="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  >Go to channel</a
+                >
+              </div>
+            </div>
+          </div>
+          <!-- card 3 -->
+          <div class="col-12 col-md-4">
+            <div class="card shadow-lg" style="width: 100%">
+              <img
+                src="/images/antique.png"
+                class="card-img-top img-fluid"
+                style="height: 180px"
+                alt="image of an antique logo"
+              />
+              <div class="card-body">
+                <h5 class="card-title">Auction Bidding</h5>
+                <p class="card-text">
+                  Auction site an school project where users can register/login
+                  a profile, add bids, and place bids.
+                </p>
+                <a
+                  href="https://actionbidding.netlify.app/"
+                  class="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  >Go to website</a
+                >
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
+    <!--Contact-->
+    <section class="contact py-5">
+      <div class="container">
+        <h2 class="title text-center">Contact me</h2>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card text-center">
+              <div class="card-body shadow-lg">
+                <p class="card-text">
+                  Want to collaborate or have a question? Reach out to me!
+                </p>
+                <p class="card-text">
+                  <strong>Email:</strong>
+                  <a href="kristianhaugen98@gmail.com"
+                    >kristianhaugen98@gmail.com</a
+                  >
+                </p>
+                <p class="card-text"><strong>Phone number:</strong> 97035265</p>
+                <a
+                  href="kristianhaugen98@gmail.com"
+                  class="btn btn-primary mt-3"
+                  >Send me an email</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--Footer-->
+    <footer class="footer py-5 text-center">
+      <div class="container">
+        <div class="card text-center border-0">
+          <div class="card-header">Featured</div>
+          <div class="card-body">
+            <h5 class="card-title">© 2025 Kristian Haugen</h5>
+            <p class="card-text">
+              Front-End Developer passionate about creating user-friendly web
+              experiences. All rights reserved.
+            </p>
+            <a
+              href="https://example.com"
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener"
+              >Go somewhere</a
+            >
+            <p class="mb-0">Last updated: <span id="last-updated"></span></p>
+          </div>
+        </div>
+      </div>
+    </footer>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <script src="/script.js"></script>
   </body>
 </html>
