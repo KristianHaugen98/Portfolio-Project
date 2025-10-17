@@ -72,9 +72,7 @@ async function renderSkills() {
       if (data.skill) {
         const skillDiv = document.createElement("div");
         skillDiv.className = "col-4 col-md-2";
-        skillDiv.innerHTML = `<img src="/images/${data.skill.toLowerCase()}.png" class="img-fluid" alt="${
-          data.skill
-        }" style="max-width: 50px" />`;
+        skillDiv.innerHTML = `<img src="/images/uploads/" class="img-fluid" alt="${data.skill}" style="max-width: 50px" />`;
         skillsList.appendChild(skillDiv);
       }
     });
@@ -89,7 +87,13 @@ async function renderProjects() {
     ".row.g-4.justify-content-center"
   );
   if (staticProjects) staticProjects.style.display = "none"; // Hide static projects initially
-  projectsList.innerHTML = ""; // Clear existing content
+  projectsList.innerHTML = `
+    <div class="container">
+      <div class="row g-4 justify-content-center">
+      </div>
+    </div>
+  `; // Add container and row for grid layout
+  const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0; // Initialize counter
   const projectFiles = ["game-hub", "youtube", "auction-bidding"];
   for (const file of projectFiles) {
@@ -98,12 +102,12 @@ async function renderProjects() {
         loadedProjects++; // Increment counter
         const projectDiv = document.createElement("div");
         projectDiv.className = "col-12 col-md-4";
+        // Use fallback image if data.image is undefined
+        const imageName = data.image || file;
         projectDiv.innerHTML = `
           <div class="card shadow-lg" style="width: 100%;">
-            <img src="/images/uploads/${
-              data.image || file
-            }.png" class="card-img-top img-fluid" style="height: 180px" alt="${
-          data.title
+            <img src="/images/uploads/${imageName}.png" class="card-img-top img-fluid" style="height: 180px" alt="${
+          data.title || file
         }" />
             <div class="card-body">
               <h5 class="card-title">${data.title}</h5>
@@ -114,7 +118,7 @@ async function renderProjects() {
             </div>
           </div>
         `;
-        projectsList.appendChild(projectDiv);
+        projectsRow.appendChild(projectDiv);
       }
       // Show static projects if no projects loaded
       if (
@@ -123,8 +127,8 @@ async function renderProjects() {
         staticProjects
       ) {
         staticProjects.style.display = "";
+        projectsList.innerHTML = ""; // Clear dynamic content if fallback is used
       }
     });
   }
 }
-renderProjects();
