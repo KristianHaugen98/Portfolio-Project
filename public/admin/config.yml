@@ -8,18 +8,17 @@ collections:
     label: "Hero"
     folder: "content/hero"
     create: true
+    slug: "data"
     fields:
       - { label: "Navn", name: "name", widget: "string" }
-      - { label: "Tagline", name: "tagline", widget: "string" }
       - { label: "Intro", name: "intro", widget: "text" }
   - name: "about"
     label: "About Me"
     folder: "content/about"
     create: true
+    slug: "data"
     fields:
       - { label: "Bio", name: "bio", widget: "text" }
-      - { label: "Bilde", name: "image", widget: "image" }
-      - { label: "Bakgrunn", name: "background", widget: "text" }
   - name: "skills"
     label: "Skills"
     folder: "content/skills"
@@ -37,10 +36,3 @@ collections:
       - { label: "Tech Stack", name: "tech", widget: "list" }
       - { label: "Lenke", name: "link", widget: "string" }
       - { label: "Bilde", name: "image", widget: "image" }
-  - name: "contact"
-    label: "Contact"
-    folder: "content/contact"
-    create: true
-    fields:
-      - { label: "E-post", name: "email", widget: "string" }
-      - { label: "LinkedIn", name: "linkedin", widget: "string" }
