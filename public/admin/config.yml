@@ -30,11 +30,13 @@ collections:
     label: "Projects"
     folder: "content/projects"
     create: true
+    slug: "{{title}}"
     fields:
       - { label: "Tittel", name: "title", widget: "string" }
       - { label: "Beskrivelse", name: "description", widget: "text" }
       - { label: "Tech Stack", name: "tech", widget: "list" }
       - { label: "Lenke", name: "link", widget: "string" }
+      - { label: "Bilde", name: "image", widget: "image" }
   - name: "contact"
     label: "Contact"
     folder: "content/contact"
