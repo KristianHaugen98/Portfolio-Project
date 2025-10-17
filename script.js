@@ -48,13 +48,14 @@ renderContent("/content/hero/data.md", (data) => {
     data.name || "Kristian Haugen";
   document.getElementById("hero-intro").textContent =
     data.intro ||
-    "Front-End Developer with passion for clean design and user-friendly web experience";
+    "Front-End Developer with passion for clean design and user-friendly web experience.";
 });
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
   document.getElementById("about-bio").textContent =
-    data.bio || "I'm a Front-End student at Noroff...";
+    data.bio ||
+    "Im a Front-End Developer student at Noroff who enjoys creating interactive and responsive web experience. Im dedicated to writing code that not only looks good, but also performs amoothly across all devices, and see the creation of it. My goal is to make technologies that does good for the world. Im also an active person who love to work out and take care of my body with good work/life balance. Im also currently working as an shop assistan who have expertice in computer and mobile / tablets. Where i sell tech products as well, and help customers with related stuff.";
 });
 
 // 5. Render skills (list of files in folder - fetch all):
@@ -64,7 +65,7 @@ async function renderSkills() {
   const staticSkills = document.querySelector(
     ".row.g-3.justify-content-center"
   );
-  if (staticSkills) staticSkills.style.display = "none"; // Hide static skills
+  if (staticSkills) staticSkills.style.display = "true"; // Show static skills
   const skills = ["html5", "css", "bootstrap", "javascript", "figma"];
   for (const skill of skills) {
     renderContent(`/content/skills/${skill}.md`, (data) => {
@@ -87,19 +88,21 @@ async function renderProjects() {
   const staticProjects = document.querySelector(
     ".row.g-4.justify-content-center"
   );
-  if (staticProjects) staticProjects.style.display = "none"; // Hide static projects
+  if (staticProjects) staticProjects.style.display = "none"; // Hide static projects initially
   projectsList.innerHTML = ""; // Clear existing content
+  let loadedProjects = 0; // Initialize counter
   const projectFiles = ["game-hub", "youtube", "auction-bidding"];
   for (const file of projectFiles) {
     renderContent(`/content/projects/${file}.md`, (data) => {
       if (data.title) {
+        loadedProjects++; // Increment counter
         const projectDiv = document.createElement("div");
         projectDiv.className = "col-12 col-md-4";
         projectDiv.innerHTML = `
           <div class="card shadow-lg" style="width: 100%;">
             <img src="/images/uploads/${
               data.image || file
-            }.png" class="card-img-top img-fluid" style="height: 180px; object-fit: cover;" alt="${
+            }.png" class="card-img-top img-fluid" style="height: 180px" alt="${
           data.title
         }" />
             <div class="card-body">
@@ -119,9 +122,7 @@ async function renderProjects() {
         loadedProjects === 0 &&
         staticProjects
       ) {
-        staticProjects.style.display = "block";
-      } else if (staticProjects) {
-        staticProjects.style.display = "none";
+        staticProjects.style.display = "";
       }
     });
   }
