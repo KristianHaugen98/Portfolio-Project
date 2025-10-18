@@ -61,21 +61,43 @@ renderContent("/content/about/data.md", (data) => {
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
   const skillsList = document.getElementById("skills-list");
-  skillsList.innerHTML = ""; // Clear existing content
+  skillsList.innerHTML = ""; // Tøm eksisterende innhold
   const staticSkills = document.querySelector(
     ".row.g-3.justify-content-center"
   );
-  if (staticSkills) staticSkills.style.display = "true"; // Show static skills
-  const skills = ["html5", "css", "bootstrap", "javascript", "figma"];
+  if (staticSkills) staticSkills.style.display = "none"; // Temporarily hide static skills
+  const skills = [
+    "map-skill-html-5",
+    "map-skill-css-bootstrap",
+    "map-skill-javascript",
+    "map-skill-figma-design",
+  ];
+  // Add container and row for centering and grid
+  const container = document.createElement("div");
+  container.className = "container";
+  const row = document.createElement("div");
+  row.className = "row g-3 justify-content-center";
+  container.appendChild(row);
+  skillsList.appendChild(container);
+
   for (const skill of skills) {
-    renderContent(`/content/skills/${skill}.md`, (data) => {
+    await renderContent(`/content/skills/${skill}.md`, (data) => {
+      console.log(`Processing ${skill}.md, data:`, data); // For Debugging
       if (data.skill) {
         const skillDiv = document.createElement("div");
-        skillDiv.className = "col-4 col-md-2";
-        skillDiv.innerHTML = `<img src="/images/uploads/" class="img-fluid" alt="${data.skill}" style="max-width: 50px" />`;
-        skillsList.appendChild(skillDiv);
+        skillDiv.className = "col-4 col-md-2"; // Responsive column width
+        skillDiv.innerHTML = `<img src="/images/uploads/${data.skill.toLowerCase()}.png" class="img-fluid" alt="${
+          data.skill
+        }" style="max-width: 50px" />`;
+        row.appendChild(skillDiv);
+      } else {
+        console.warn(`No skill data found in ${skill}.md`);
       }
     });
+  }
+  // Show static skills as fallback if no data is loaded.
+  if (skillsList.querySelectorAll(".col-4").length === 0 && staticSkills) {
+    staticSkills.style.display = "";
   }
 }
 renderSkills();
