@@ -22,6 +22,7 @@ function parseFrontmatter(markdownContent) {
       data[key] = value.replace(/["']/g, "");
     }
   });
+
   return data;
 }
 
@@ -48,6 +49,7 @@ renderContent("/content/hero/data.md", (data) => {
     data.name || "Kristian Haugen";
   document.getElementById("hero-intro").textContent =
     data.intro ||
+    data.content ||
     "Front-End Developer with passion for clean design and user-friendly web experience.";
 });
 
@@ -108,60 +110,162 @@ async function renderProjects() {
   const staticProjects = document.querySelector(
     ".row.g-4.justify-content-center"
   );
-  if (staticProjects) staticProjects.style.display = "none"; // Skjul statiske kort
+  if (staticProjects) staticProjects.style.display = "none";
+
   projectsList.innerHTML = `
     <div class="container">
-      <div class="row g-4 justify-content-center">
-      </div>
+      <div class="row g-4 justify-content-center"></div>
     </div>
   `;
   const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0;
 
-  // Hent liste over prosjekter fra Netlify-funksjon
-  try {
-    const response = await fetch("/functions/list-projects.js");
-    if (!response.ok) throw new Error("Failed to fetch project list");
-    const projectFiles = await response.json();
+  let projectFiles;
+  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    projectFiles = [
+      "game-hub",
+      "auction-bidding",
+      "my-youtube-channel",
+      "test",
+    ];
+  } else {
+    try {
+      const response = await fetch("/.netlify/functions/list-projects");
+      const text = await response.text();
 
-    for (const file of projectFiles) {
-      await renderContent(`/content/projects/${file}.md`, (data) => {
-        console.log(`Processing ${file}.md, data:`, data); // Feilsøking
-        if (data.title) {
-          loadedProjects++;
-          const projectDiv = document.createElement("div");
-          projectDiv.className = "col-12 col-md-4"; // Responsiv layout
-          const imageName = data.image || file; // Fallback til filnavn
-          projectDiv.innerHTML = `
-            <div class="card shadow-lg" style="width: 100%;">
-              <img src="/images/uploads/${imageName}.png" class="card-img-top img-fluid" style="height: 180px" alt="${
-            data.title
-          }" />
-              <div class="card-body">
-                <h5 class="card-title">${data.title}</h5>
-                <p class="card-text">${
-                  data.description || "No description available"
-                }</p>
-                <a href="${
-                  data.link || "#"
-                }" class="btn btn-primary" target="_blank" rel="noopener">${
-            data.link ? "Go to website" : "No link"
-          }</a>
-              </div>
-            </div>
-          `;
-          projectsRow.appendChild(projectDiv);
-        }
-      });
+      try {
+        projectFiles = JSON.parse(text);
+      } catch (parseError) {
+        console.error("Invalid JSON from list-projects:", text);
+        projectFiles = [];
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      projectFiles = [];
     }
-  } catch (error) {
-    console.error("Error fetching projects:", error);
   }
 
-  // Fallback til statiske prosjekter hvis ingen lastes
+  for (const file of projectFiles) {
+    await renderContent(`/content/projects/${file}.md`, (data) => {
+      console.log(`Processing ${file}.md, data:`, data);
+
+      if (!data || Object.keys(data).length === 0) {
+        console.warn(`No data found in ${file}.md`);
+        return;
+      }
+
+      const title = data.title || file;
+      const description =
+        data.description || data.content || "No description available";
+      const link = data.link || "#";
+      const imagePath = data.image?.startsWith("/")
+        ? data.image
+        : `/images/uploads/${data.image || file}.png`;
+
+      loadedProjects++;
+      const projectDiv = document.createElement("div");
+      projectDiv.className = "col-12 col-md-4";
+      projectDiv.innerHTML = `
+        <div class="card shadow-lg" style="width: 100%;">
+          <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
+          <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">${description}</p>
+            <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
+              ${link !== "#" ? "Go to website" : "No link"}
+            </a>
+          </div>
+        </div>
+      `;
+      projectsRow.appendChild(projectDiv);
+    });
+  }
+
   if (loadedProjects === 0 && staticProjects) {
     staticProjects.style.display = "";
-    projectsList.innerHTML = ""; // Tøm dynamisk innhold
+    projectsList.innerHTML = "";
+  }
+}
+renderProjects();
+async function renderProjects() {
+  const projectsList = document.getElementById("projects-list");
+  const staticProjects = document.querySelector(
+    ".row.g-4.justify-content-center"
+  );
+  if (staticProjects) staticProjects.style.display = "none";
+
+  projectsList.innerHTML = `
+    <div class="container">
+      <div class="row g-4 justify-content-center"></div>
+    </div>
+  `;
+  const projectsRow = projectsList.querySelector(".row");
+  let loadedProjects = 0;
+
+  let projectFiles;
+  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    projectFiles = [
+      "game-hub",
+      "auction-bidding",
+      "my-youtube-channel",
+      "test",
+    ];
+  } else {
+    try {
+      const response = await fetch("/.netlify/functions/list-projects");
+      const text = await response.text();
+
+      try {
+        projectFiles = JSON.parse(text);
+      } catch (parseError) {
+        console.error("Invalid JSON from list-projects:", text);
+        projectFiles = [];
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      projectFiles = [];
+    }
+  }
+
+  for (const file of projectFiles) {
+    await renderContent(`/content/projects/${file}.md`, (data) => {
+      console.log(`Processing ${file}.md, data:`, data);
+
+      if (!data || Object.keys(data).length === 0) {
+        console.warn(`No data found in ${file}.md`);
+        return;
+      }
+
+      const title = data.title || file;
+      const description =
+        data.description || data.content || "No description available";
+      const link = data.link || "#";
+      const imagePath = data.image?.startsWith("/")
+        ? data.image
+        : `/images/uploads/${data.image || file}.png`;
+
+      loadedProjects++;
+      const projectDiv = document.createElement("div");
+      projectDiv.className = "col-12 col-md-4";
+      projectDiv.innerHTML = `
+        <div class="card shadow-lg" style="width: 100%;">
+          <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
+          <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">${description}</p>
+            <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
+              ${link !== "#" ? "Go to website" : "No link"}
+            </a>
+          </div>
+        </div>
+      `;
+      projectsRow.appendChild(projectDiv);
+    });
+  }
+
+  if (loadedProjects === 0 && staticProjects) {
+    staticProjects.style.display = "";
+    projectsList.innerHTML = "";
   }
 }
 renderProjects();
