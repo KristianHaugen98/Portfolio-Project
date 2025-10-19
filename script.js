@@ -131,7 +131,15 @@ async function renderProjects() {
   const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0;
 
-  {
+  let projectFiles;
+  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+    projectFiles = [
+      "game-hub",
+      "auction-bidding",
+      "my-youtube-channel",
+      "test",
+    ];
+  } else {
     try {
       const response = await fetch("/.netlify/functions/list-projects");
       const text = await response.text();
