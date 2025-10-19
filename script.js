@@ -9,22 +9,31 @@ document.getElementById("last-updated").textContent = new Date(
 
 // JavaScript to fetch content from Decap CMS to my site:
 
+// This updates the time for when the pages was last modified:
+document.getElementById("last-updated").textContent = new Date(
+  document.lastModified
+).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+// JavaScript to fetch content from Decap CMS to my site:
+
 // 1. Function to parse YAML frontmatter from Markdown file:
 function parseFrontmatter(markdownContent) {
-  const match = markdownContent.match(/---\n([\s\S]*?)\n---\n?([\s\S]*)?/);
+  const frontmatterMatch = markdownContent.match(/---\s*\n([\s\S]*?)\n---/);
+  if (!frontmatterMatch) return {};
+  const yamlString = frontmatterMatch[1];
+  const lines = yamlString.split("\n");
   const data = {};
-  if (match) {
-    const yamlBlock = match[1];
-    const bodyContent = match[2]?.trim() || "";
+  lines.forEach((line) => {
+    const [key, value] = line.split(":").map((s) => s.trim());
+    if (key && value) {
+      data[key] = value.replace(/["']/g, "");
+    }
+  });
 
-    yamlBlock.split("\n").forEach((line) => {
-      const [key, ...rest] = line.split(":");
-      if (key && rest.length > 0) {
-        data[key.trim()] = rest.join(":").trim().replace(/["']/g, "");
-      }
-    });
-    data.content = bodyContent;
-  }
   return data;
 }
 
@@ -122,15 +131,7 @@ async function renderProjects() {
   const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0;
 
-  let projectFiles;
-  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-    projectFiles = [
-      "game-hub",
-      "auction-bidding",
-      "my-youtube-channel",
-      "test",
-    ];
-  } else {
+  {
     try {
       const response = await fetch("/.netlify/functions/list-projects");
       const text = await response.text();
@@ -180,75 +181,6 @@ async function renderProjects() {
         </div>
       `;
       projectsRow.appendChild(projectDiv);
-    });
-  }
-
-  if (loadedProjects === 0 && staticProjects) {
-    staticProjects.style.display = "";
-    projectsList.innerHTML = "";
-  }
-}
-renderProjects();
-async function renderProjects() {
-  const projectsList = document.getElementById("projects-list");
-  const staticProjects = document.querySelector(
-    ".row.g-4.justify-content-center"
-  );
-  if (staticProjects) staticProjects.style.display = "none";
-
-  projectsList.innerHTML = `
-    <div class="container">
-      <div class="row g-4 justify-content-center"></div>
-    </div>
-  `;
-  const projectsRow = projectsList.querySelector(".row");
-  let loadedProjects = 0;
-
-  let projectFiles = [];
-
-  try {
-    const response = await fetch("/.netlify/functions/list-projects");
-    if (!response.ok) throw new Error("Failed to fetch project list");
-    projectFiles = await response.json();
-    console.log("Fetched project files:", projectFiles);
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-    return;
-  }
-
-  for (const file of projectFiles) {
-    await renderContent(`/content/projects/${file}.md`, (data) => {
-      console.log(`Processing ${file}.md`, data);
-
-      if (!data || Object.keys(data).length === 0) {
-        console.warn(`No data found in ${file}.md`);
-        return;
-      }
-
-      const title = data.title || file;
-      const description =
-        data.description || data.content || "No description available";
-      const link = data.link || "#";
-      const imagePath = data.image?.startsWith("/")
-        ? data.image
-        : `/images/uploads/${data.image || file}.png`;
-
-      const projectDiv = document.createElement("div");
-      projectDiv.className = "col-12 col-md-4";
-      projectDiv.innerHTML = `
-        <div class="card shadow-lg" style="width: 100%;">
-          <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
-          <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text">${description}</p>
-            <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
-              ${link !== "#" ? "Go to website" : "No link"}
-            </a>
-          </div>
-        </div>
-      `;
-      projectsRow.appendChild(projectDiv);
-      loadedProjects++;
     });
   }
 
