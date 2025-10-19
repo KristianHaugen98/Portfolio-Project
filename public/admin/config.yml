@@ -29,6 +29,7 @@ collections:
     label: "Projects"
     folder: "content/projects"
     create: true
+    slug: "{{slug}}"
     fields:
       - { label: "Tittel", name: "title", widget: "string" }
       - { label: "Beskrivelse", name: "description", widget: "text" }

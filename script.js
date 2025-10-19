@@ -116,6 +116,24 @@ async function renderSkills() {
 renderSkills();
 
 // This will render projects (list of files in folder):
+async function fetchProjectFilesFromGitHub() {
+  const repo = "kristianhaugen98/portfolio-project";
+  const branch = "main";
+  const url = `https://api.github.com/repos/kristianhaugen98/portfolio-project/contents/content/projects?ref=main`;
+
+  try {
+    const response = await fetch(url);
+    const files = await response.json();
+
+    return files
+      .filter((file) => file.name.endsWith(".md"))
+      .map((file) => file.name.replace(".md", ""));
+  } catch (error) {
+    console.error("GitHub API error:", error);
+    return [];
+  }
+}
+
 async function renderProjects() {
   const projectsList = document.getElementById("projects-list");
   const staticProjects = document.querySelector(
@@ -129,41 +147,14 @@ async function renderProjects() {
     </div>
   `;
   const projectsRow = projectsList.querySelector(".row");
-  let loadedProjects = 0;
 
-  let projectFiles = [];
-
-  const isLocal =
-    location.hostname === "127.0.0.1" || location.hostname === "localhost";
-
-  if (isLocal) {
-    console.warn("Local environment — using fallback list.");
-    projectFiles = [
-      "game-hub",
-      "auction-bidding",
-      "my-youtube-channel",
-      "test",
-    ];
-  } else {
-    try {
-      const response = await fetch("/.netlify/functions/list-projects");
-      if (!response.ok) throw new Error("Failed to fetch project list");
-      projectFiles = await response.json();
-      console.log("Fetched project files:", projectFiles);
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      return;
-    }
-  }
+  const projectFiles = await fetchProjectFilesFromGitHub();
 
   for (const file of projectFiles) {
-    await renderContent(`/content/projects/${file}.md`, (data) => {
-      console.log(`Processing ${file}.md`, data);
-
-      if (!data || Object.keys(data).length === 0) {
-        console.warn(`No data found in ${file}.md`);
-        return;
-      }
+    try {
+      const response = await fetch(`/content/projects/${file}.md`);
+      const markdown = await response.text();
+      const data = parseFrontmatter(markdown);
 
       const title = data.title || file;
       const description =
@@ -188,13 +179,8 @@ async function renderProjects() {
         </div>
       `;
       projectsRow.appendChild(projectDiv);
-      loadedProjects++;
-    });
-  }
-
-  if (loadedProjects === 0 && staticProjects) {
-    staticProjects.style.display = "";
-    projectsList.innerHTML = "";
+    } catch (error) {
+      console.warn(`Could not load ${file}.md`, error);
+    }
   }
 }
-renderProjects();
