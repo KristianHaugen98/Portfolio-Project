@@ -108,49 +108,60 @@ async function renderProjects() {
   const staticProjects = document.querySelector(
     ".row.g-4.justify-content-center"
   );
-  if (staticProjects) staticProjects.style.display = "none"; // Hide static projects initially
+  if (staticProjects) staticProjects.style.display = "none"; // Skjul statiske kort
   projectsList.innerHTML = `
     <div class="container">
       <div class="row g-4 justify-content-center">
       </div>
     </div>
-  `; // Add container and row for grid layout
+  `;
   const projectsRow = projectsList.querySelector(".row");
-  let loadedProjects = 0; // Initialize counter
-  const projectFiles = ["game-hub", "youtube", "auction-bidding"];
-  for (const file of projectFiles) {
-    renderContent(`/content/projects/${file}.md`, (data) => {
-      if (data.title) {
-        loadedProjects++; // Increment counter
-        const projectDiv = document.createElement("div");
-        projectDiv.className = "col-12 col-md-4";
-        // Use fallback image if data.image is undefined
-        const imageName = data.image || file;
-        projectDiv.innerHTML = `
-          <div class="card shadow-lg" style="width: 100%;">
-            <img src="/images/uploads/${imageName}.png" class="card-img-top img-fluid" style="height: 180px" alt="${
-          data.title || file
-        }" />
-            <div class="card-body">
-              <h5 class="card-title">${data.title}</h5>
-              <p class="card-text">${data.description}</p>
-              <a href="${
-                data.link
-              }" class="btn btn-primary" target="_blank" rel="noopener">Go to website</a>
+  let loadedProjects = 0;
+
+  // Hent liste over prosjekter fra Netlify-funksjon
+  try {
+    const response = await fetch("/.netlify/functions/list-projects");
+    if (!response.ok) throw new Error("Failed to fetch project list");
+    const projectFiles = await response.json();
+
+    for (const file of projectFiles) {
+      await renderContent(`/content/projects/${file}.md`, (data) => {
+        console.log(`Processing ${file}.md, data:`, data); // Feilsøking
+        if (data.title) {
+          loadedProjects++;
+          const projectDiv = document.createElement("div");
+          projectDiv.className = "col-12 col-md-4"; // Responsiv layout
+          const imageName = data.image || file; // Fallback til filnavn
+          projectDiv.innerHTML = `
+            <div class="card shadow-lg" style="width: 100%;">
+              <img src="/images/uploads/${imageName}.png" class="card-img-top img-fluid" style="height: 180px" alt="${
+            data.title
+          }" />
+              <div class="card-body">
+                <h5 class="card-title">${data.title}</h5>
+                <p class="card-text">${
+                  data.description || "No description available"
+                }</p>
+                <a href="${
+                  data.link || "#"
+                }" class="btn btn-primary" target="_blank" rel="noopener">${
+            data.link ? "Go to website" : "No link"
+          }</a>
+              </div>
             </div>
-          </div>
-        `;
-        projectsRow.appendChild(projectDiv);
-      }
-      // Show static projects if no projects loaded
-      if (
-        projectFiles.indexOf(file) === projectFiles.length - 1 &&
-        loadedProjects === 0 &&
-        staticProjects
-      ) {
-        staticProjects.style.display = "";
-        projectsList.innerHTML = ""; // Clear dynamic content if fallback is used
-      }
-    });
+          `;
+          projectsRow.appendChild(projectDiv);
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+
+  // Fallback til statiske prosjekter hvis ingen lastes
+  if (loadedProjects === 0 && staticProjects) {
+    staticProjects.style.display = "";
+    projectsList.innerHTML = ""; // Tøm dynamisk innhold
   }
 }
+renderProjects();
