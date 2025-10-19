@@ -116,21 +116,64 @@ async function renderSkills() {
 renderSkills();
 
 // This will render projects (list of files in folder):
-async function fetchProjectFilesFromGitHub() {
-  const repo = "kristianhaugen98/portfolio-project";
-  const branch = "main";
-  const url = `https://api.github.com/repos/kristianhaugen98/portfolio-project/contents/content/projects?ref=main`;
+async function renderProjects() {
+  const projectsList = document.getElementById("projects-list");
+  const staticProjects = document.querySelector(
+    ".row.g-4.justify-content-center"
+  );
+  if (staticProjects) staticProjects.style.display = "none";
+
+  projectsList.innerHTML = `
+    <div class="container">
+      <div class="row g-4 justify-content-center"></div>
+    </div>
+  `;
+  const projectsRow = projectsList.querySelector(".row");
+
+  let projectFiles = [];
 
   try {
-    const response = await fetch(url);
-    const files = await response.json();
-
-    return files
-      .filter((file) => file.name.endsWith(".md"))
-      .map((file) => file.name.replace(".md", ""));
+    const response = await fetch("/.netlify/functions/list-projects");
+    if (!response.ok) throw new Error("Failed to fetch project list");
+    projectFiles = await response.json();
+    console.log("Fetched project files:", projectFiles);
   } catch (error) {
-    console.error("GitHub API error:", error);
-    return [];
+    console.error("Error fetching projects:", error);
+    return;
+  }
+
+  for (const file of projectFiles) {
+    try {
+      const response = await fetch(`/content/projects/${file}.md`);
+      const markdown = await response.text();
+      const data = parseFrontmatter(markdown);
+
+      const title = data.title || file;
+      const description =
+        data.description || data.content || "No description available";
+      const link = data.link || "#";
+      const imagePath = data.image?.startsWith("/")
+        ? data.image
+        : `/images/uploads/${data.image || file}.png`;
+
+      const projectDiv = document.createElement("div");
+      projectDiv.className = "col-12 col-md-4";
+      projectDiv.innerHTML = `
+        <div class="card shadow-lg" style="width: 100%;">
+          <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
+          <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">${description}</p>
+            <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
+              ${link !== "#" ? "Go to website" : "No link"}
+            </a>
+          </div>
+        </div>
+      `;
+      projectsRow.appendChild(projectDiv);
+    } catch (error) {
+      console.warn(`Could not load ${file}.md`, error);
+    }
   }
 }
 
