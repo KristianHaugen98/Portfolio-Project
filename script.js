@@ -131,8 +131,13 @@ async function renderProjects() {
   const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0;
 
-  let projectFiles;
-  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+  let projectFiles = [];
+
+  const isLocal =
+    location.hostname === "127.0.0.1" || location.hostname === "localhost";
+
+  if (isLocal) {
+    console.warn("Local environment — using fallback list.");
     projectFiles = [
       "game-hub",
       "auction-bidding",
@@ -142,23 +147,18 @@ async function renderProjects() {
   } else {
     try {
       const response = await fetch("/.netlify/functions/list-projects");
-      const text = await response.text();
-
-      try {
-        projectFiles = JSON.parse(text);
-      } catch (parseError) {
-        console.error("Invalid JSON from list-projects:", text);
-        projectFiles = [];
-      }
+      if (!response.ok) throw new Error("Failed to fetch project list");
+      projectFiles = await response.json();
+      console.log("Fetched project files:", projectFiles);
     } catch (error) {
       console.error("Error fetching projects:", error);
-      projectFiles = [];
+      return;
     }
   }
 
   for (const file of projectFiles) {
     await renderContent(`/content/projects/${file}.md`, (data) => {
-      console.log(`Processing ${file}.md, data:`, data);
+      console.log(`Processing ${file}.md`, data);
 
       if (!data || Object.keys(data).length === 0) {
         console.warn(`No data found in ${file}.md`);
@@ -173,7 +173,6 @@ async function renderProjects() {
         ? data.image
         : `/images/uploads/${data.image || file}.png`;
 
-      loadedProjects++;
       const projectDiv = document.createElement("div");
       projectDiv.className = "col-12 col-md-4";
       projectDiv.innerHTML = `
@@ -189,6 +188,7 @@ async function renderProjects() {
         </div>
       `;
       projectsRow.appendChild(projectDiv);
+      loadedProjects++;
     });
   }
 
