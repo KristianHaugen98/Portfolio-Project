@@ -120,7 +120,7 @@ async function renderProjects() {
 
   // Hent liste over prosjekter fra Netlify-funksjon
   try {
-    const response = await fetch("/functions/list-projects");
+    const response = await fetch("/functions/list-projects.js");
     if (!response.ok) throw new Error("Failed to fetch project list");
     const projectFiles = await response.json();
 

@@ -1,10 +1,10 @@
 // Netlify function that finds all project files in a folder and sends them as a list
-const fs = require("fs").promises;
-const path = require("path");
+import { promises as fs } from "fs";
+import { join } from "path";
 
-exports.handler = async () => {
+export async function handler() {
   try {
-    const directoryPath = path.join(process.cwd(), "content/projects");
+    const directoryPath = join(process.cwd(), "content/projects");
     const files = await fs.readdir(directoryPath);
     const projectFiles = files
       .filter((file) => file.endsWith(".md"))
@@ -20,4 +20,4 @@ exports.handler = async () => {
       body: JSON.stringify({ error: "Failed to list projects" }),
     };
   }
-};
+}
