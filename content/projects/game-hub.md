@@ -1,5 +1,5 @@
 ---
-title: Game Hub
+title: Game Hub test
 description: E-Commerce project from school using Wordpress, and fetch product
   using JavaScript`s fetch function.
 link: https://kristiansfirstwebsite.netlify.app/
