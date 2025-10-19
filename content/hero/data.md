@@ -1,4 +1,5 @@
 ---
-name: Navn test
-intro: Intro test
+name: Kristian Haugen (test)
+intro: Front-End Developer with passion for clean design and user-friendly web
+  experience. (Intro test)
 ---
