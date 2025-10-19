@@ -11,18 +11,20 @@ document.getElementById("last-updated").textContent = new Date(
 
 // 1. Function to parse YAML frontmatter from Markdown file:
 function parseFrontmatter(markdownContent) {
-  const frontmatterMatch = markdownContent.match(/---\s*\n([\s\S]*?)\n---/);
-  if (!frontmatterMatch) return {};
-  const yamlString = frontmatterMatch[1];
-  const lines = yamlString.split("\n");
+  const match = markdownContent.match(/---\n([\s\S]*?)\n---\n?([\s\S]*)?/);
   const data = {};
-  lines.forEach((line) => {
-    const [key, value] = line.split(":").map((s) => s.trim());
-    if (key && value) {
-      data[key] = value.replace(/["']/g, "");
-    }
-  });
+  if (match) {
+    const yamlBlock = match[1];
+    const bodyContent = match[2]?.trim() || "";
 
+    yamlBlock.split("\n").forEach((line) => {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length > 0) {
+        data[key.trim()] = rest.join(":").trim().replace(/["']/g, "");
+      }
+    });
+    data.content = bodyContent;
+  }
   return data;
 }
 
@@ -202,34 +204,21 @@ async function renderProjects() {
   const projectsRow = projectsList.querySelector(".row");
   let loadedProjects = 0;
 
-  let projectFiles;
-  if (location.hostname === "127.0.0.1" || location.hostname === "localhost") {
-    projectFiles = [
-      "game-hub",
-      "auction-bidding",
-      "my-youtube-channel",
-      "test",
-    ];
-  } else {
-    try {
-      const response = await fetch("/.netlify/functions/list-projects");
-      const text = await response.text();
+  let projectFiles = [];
 
-      try {
-        projectFiles = JSON.parse(text);
-      } catch (parseError) {
-        console.error("Invalid JSON from list-projects:", text);
-        projectFiles = [];
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      projectFiles = [];
-    }
+  try {
+    const response = await fetch("/.netlify/functions/list-projects");
+    if (!response.ok) throw new Error("Failed to fetch project list");
+    projectFiles = await response.json();
+    console.log("Fetched project files:", projectFiles);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return;
   }
 
   for (const file of projectFiles) {
     await renderContent(`/content/projects/${file}.md`, (data) => {
-      console.log(`Processing ${file}.md, data:`, data);
+      console.log(`Processing ${file}.md`, data);
 
       if (!data || Object.keys(data).length === 0) {
         console.warn(`No data found in ${file}.md`);
@@ -244,7 +233,6 @@ async function renderProjects() {
         ? data.image
         : `/images/uploads/${data.image || file}.png`;
 
-      loadedProjects++;
       const projectDiv = document.createElement("div");
       projectDiv.className = "col-12 col-md-4";
       projectDiv.innerHTML = `
@@ -260,6 +248,7 @@ async function renderProjects() {
         </div>
       `;
       projectsRow.appendChild(projectDiv);
+      loadedProjects++;
     });
   }
 
