@@ -21,6 +21,14 @@ img {
 .title {
   font-family: "Roboto", sans-serif;
 }
+.card {
+  height: auto;
+  min-height: 100%;
+}
+.card-text {
+  overflow: visible;
+  white-space: pre-wrap;
+}
 
 .card-img-top {
   object-fit: contain;

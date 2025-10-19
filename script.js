@@ -22,18 +22,23 @@ document.getElementById("last-updated").textContent = new Date(
 
 // 1. Function to parse YAML frontmatter from Markdown file:
 function parseFrontmatter(markdownContent) {
-  const frontmatterMatch = markdownContent.match(/---\s*\n([\s\S]*?)\n---/);
-  if (!frontmatterMatch) return {};
-  const yamlString = frontmatterMatch[1];
-  const lines = yamlString.split("\n");
+  const match = markdownContent.match(
+    /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)?$/
+  );
   const data = {};
-  lines.forEach((line) => {
-    const [key, value] = line.split(":").map((s) => s.trim());
-    if (key && value) {
-      data[key] = value.replace(/["']/g, "");
-    }
-  });
-
+  if (match) {
+    const yaml = match[1];
+    const body = match[2]?.trim() || "";
+    yaml.split("\n").forEach((line) => {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length > 0) {
+        data[key.trim()] = rest.join(":").trim().replace(/["']/g, "");
+      }
+    });
+    data.content = body;
+  } else {
+    console.warn("YAML frontmatter not found or malformed:", markdownContent);
+  }
   return data;
 }
 
@@ -115,68 +120,28 @@ async function renderSkills() {
 }
 renderSkills();
 
-// This will render projects (list of files in folder):
-async function renderProjects() {
-  const projectsList = document.getElementById("projects-list");
-  const staticProjects = document.querySelector(
-    ".row.g-4.justify-content-center"
-  );
-  if (staticProjects) staticProjects.style.display = "none";
-
-  projectsList.innerHTML = `
-    <div class="container">
-      <div class="row g-4 justify-content-center"></div>
-    </div>
-  `;
-  const projectsRow = projectsList.querySelector(".row");
-
-  let projectFiles = [];
+// This will render projects (list of files in folder from GitHub
+//  1.
+async function fetchProjectFilesFromGitHub() {
+  const repo = "kristianhaugen98/portfolio-project";
+  const branch = "main";
+  const url = `https://api.github.com/repos/${repo}/contents/content/projects?ref=${branch}`;
 
   try {
-    const response = await fetch("/.netlify/functions/list-projects");
-    if (!response.ok) throw new Error("Failed to fetch project list");
-    projectFiles = await response.json();
-    console.log("Fetched project files:", projectFiles);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("GitHub API response not OK");
+    const files = await response.json();
+
+    return files
+      .filter((file) => file.name.endsWith(".md"))
+      .map((file) => file.name.replace(".md", ""));
   } catch (error) {
-    console.error("Error fetching projects:", error);
-    return;
-  }
-
-  for (const file of projectFiles) {
-    try {
-      const response = await fetch(`/content/projects/${file}.md`);
-      const markdown = await response.text();
-      const data = parseFrontmatter(markdown);
-
-      const title = data.title || file;
-      const description =
-        data.description || data.content || "No description available";
-      const link = data.link || "#";
-      const imagePath = data.image?.startsWith("/")
-        ? data.image
-        : `/images/uploads/${data.image || file}.png`;
-
-      const projectDiv = document.createElement("div");
-      projectDiv.className = "col-12 col-md-4";
-      projectDiv.innerHTML = `
-        <div class="card shadow-lg" style="width: 100%;">
-          <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
-          <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text">${description}</p>
-            <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
-              ${link !== "#" ? "Go to website" : "No link"}
-            </a>
-          </div>
-        </div>
-      `;
-      projectsRow.appendChild(projectDiv);
-    } catch (error) {
-      console.warn(`Could not load ${file}.md`, error);
-    }
+    console.error("GitHub API error:", error);
+    return [];
   }
 }
 
+//  3. Render projects
 async function renderProjects() {
   const projectsList = document.getElementById("projects-list");
   const staticProjects = document.querySelector(
@@ -196,6 +161,7 @@ async function renderProjects() {
   for (const file of projectFiles) {
     try {
       const response = await fetch(`/content/projects/${file}.md`);
+      if (!response.ok) throw new Error(`Could not fetch ${file}.md`);
       const markdown = await response.text();
       const data = parseFrontmatter(markdown);
 
@@ -206,7 +172,7 @@ async function renderProjects() {
       const imagePath = data.image?.startsWith("/")
         ? data.image
         : `/images/uploads/${data.image || file}.png`;
-
+      // Creating the cards
       const projectDiv = document.createElement("div");
       projectDiv.className = "col-12 col-md-4";
       projectDiv.innerHTML = `
@@ -226,4 +192,13 @@ async function renderProjects() {
       console.warn(`Could not load ${file}.md`, error);
     }
   }
+
+  // Fallback if noe project is shown
+  if (projectsRow.children.length === 0 && staticProjects) {
+    staticProjects.style.display = "";
+    projectsList.innerHTML = "";
+  }
 }
+
+//  Starts rendering
+renderProjects();
