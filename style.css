@@ -27,7 +27,7 @@ img {
 }
 .card-text {
   overflow: visible;
-  white-space: pre-wrap;
+  white-space: normal;
 }
 
 .card-img-top {

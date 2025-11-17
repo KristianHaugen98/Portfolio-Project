@@ -59,23 +59,38 @@ async function renderContent(filePath, updateFunction) {
     updateFunction({}); // Call with empty data for fallback
   }
 }
-// 3. This will render Hero (single file):
+// 3. This will render Hero (single file)
 renderContent("/content/hero/data.md", (data) => {
+  // Name
   document.getElementById("hero-name").textContent =
     data.name || "Kristian Haugen";
-  document.getElementById("hero-intro").textContent =
-    data.intro ||
-    data.content ||
-    "Front-End Developer with passion for clean design and user-friendly web experience.";
+
+  // Intro
+  let introText = data.intro?.trim();
+
+  if (!introText || introText.length < 70) {
+    introText = data.content?.trim() || "No content is showing!";
+  }
+
+  introText = introText.replace(/\n/g, "<br>");
 });
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
-  document.getElementById("about-bio").textContent =
-    data.bio ||
-    "Im a Front-End Developer student at Noroff who enjoys creating interactive and responsive web experience. Im dedicated to writing code that not only looks good, but also performs amoothly across all devices, and see the creation of it. My goal is to make technologies that does good for the world. Im also an active person who love to work out and take care of my body with good work/life balance. Im also currently working as an shop assistan who have expertice in computer and mobile / tablets. Where i sell tech products as well, and help customers with related stuff.";
-});
+  let aboutText = data.bio?.trim(); // ← Bruk "aboutText" konsekvent (eller bioText – velg ett!)
 
+  // KORREKT logikk: Hvis bio er TOM, manglende, eller veldig kort (< 50 tegn) → bruk body (data.content)
+  if (!aboutText || aboutText.length < 50) {
+    aboutText =
+      data.content?.trim() || "Ingen info om meg ennå – legg til i CMS!";
+  }
+
+  // Erstatt newlines med <br> for fine linjeskift
+  aboutText = aboutText.replace(/\n/g, "<br>");
+
+  // VIKTIG: Sett teksten på siden! (bruk innerHTML for <br> å fungere)
+  document.getElementById("about-bio").innerHTML = aboutText;
+});
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
   const skillsList = document.getElementById("skills-list");
@@ -166,8 +181,19 @@ async function renderProjects() {
       const data = parseFrontmatter(markdown);
 
       const title = data.title || file;
-      const description =
-        data.description || data.content || "No description available";
+      let description = data.description?.trim();
+
+      // If description is missing or still the old truncated one, fall back to the body
+      if (!description || description.length > 200) {
+        // data.content is the markdown body (everything after the second ---)
+        description = data.content?.trim() || "Ingen beskrivelse";
+      }
+
+      description = description || "Ingen beskrivelse";
+      // Just checking and controlling outcome:
+      console.log("Raw data from file:", file, data);
+      console.log("description field:", data.description);
+
       const link = data.link || "#";
       const imagePath = data.image?.startsWith("/")
         ? data.image
@@ -180,7 +206,7 @@ async function renderProjects() {
           <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
           <div class="card-body">
             <h5 class="card-title">${title}</h5>
-            <p class="card-text">${description}</p>
+            <p class="card-text">${description.length < 200(/\n/g, "<br>")}</p>
             <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
               ${link !== "#" ? "Go to website" : "No link"}
             </a>
