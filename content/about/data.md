@@ -1,5 +1,5 @@
 ---
-bio: I`m a Front-End student at Noroff who enjoys creating interactiveand
+bio: I`m a Front-End student at Noroff who enjoys creating interactive and
   responsive web experiences. I´m dedicated to writing code thatnot only looks
   good, but also performs smoothly across alldevices. I love to develop and see
   the creation of it. My goal isto make technologies that does good things to
