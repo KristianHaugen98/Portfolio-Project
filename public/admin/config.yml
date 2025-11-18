@@ -11,14 +11,14 @@ collections:
     slug: "data"
     fields:
       - { label: "Navn", name: "name", widget: "string" }
-      - { label: "Intro", name: "intro", widget: "text" }
+      - { label: "Intro", name: "intro", widget: "markdown" }
   - name: "about"
     label: "About Me"
     folder: "content/about"
     create: true
     slug: "data"
     fields:
-      - { label: "Bio", name: "bio", widget: "text" }
+      - { label: "Bio", name: "bio", widget: "markdown" }
   - name: "skills"
     label: "Skills"
     folder: "content/skills"

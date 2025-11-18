@@ -9,17 +9,6 @@ document.getElementById("last-updated").textContent = new Date(
 
 // JavaScript to fetch content from Decap CMS to my site:
 
-// This updates the time for when the pages was last modified:
-document.getElementById("last-updated").textContent = new Date(
-  document.lastModified
-).toLocaleDateString("en-US", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
-
-// JavaScript to fetch content from Decap CMS to my site:
-
 // 1. Function to parse YAML frontmatter from Markdown file:
 function parseFrontmatter(markdownContent) {
   const match = markdownContent.match(
@@ -61,35 +50,27 @@ async function renderContent(filePath, updateFunction) {
 }
 // 3. This will render Hero (single file)
 renderContent("/content/hero/data.md", (data) => {
+  console.log("Intro value:", data.intro, "| length:", data.intro.length);
   // Name
   document.getElementById("hero-name").textContent =
     data.name || "Kristian Haugen";
 
   // Intro
-  let introText = data.intro?.trim();
-
-  if (!introText || introText.length < 70) {
-    introText = data.content?.trim() || "No content is showing!";
-  }
-
-  introText = introText.replace(/\n/g, "<br>");
+  document.getElementById("hero-intro").textContent =
+    data.intro || "No content showing";
 });
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
-  let aboutText = data.bio?.trim(); // ← Bruk "aboutText" konsekvent (eller bioText – velg ett!)
+  document.getElementById("about-bio").textContent =
+    data.bio || "About me description";
+  let bioText = data.bio?.trim();
 
-  // KORREKT logikk: Hvis bio er TOM, manglende, eller veldig kort (< 50 tegn) → bruk body (data.content)
-  if (!aboutText || aboutText.length < 50) {
-    aboutText =
-      data.content?.trim() || "Ingen info om meg ennå – legg til i CMS!";
-  }
-
-  // Erstatt newlines med <br> for fine linjeskift
-  aboutText = aboutText.replace(/\n/g, "<br>");
-
-  // VIKTIG: Sett teksten på siden! (bruk innerHTML for <br> å fungere)
-  document.getElementById("about-bio").innerHTML = aboutText;
+  if (!bioText || bioText.length < 70)
+    document.getElementById("about-bio").innerHTML = bioText.replace(
+      /\n/g,
+      "<br>"
+    );
 });
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
