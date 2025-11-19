@@ -1,10 +1,6 @@
 ---
-bio: I`m a Front-End student at Noroff who enjoys creating interactive and
-  responsive web experiences. I´m dedicated to writing code thatnot only looks
-  good, but also performs smoothly across alldevices. I love to develop and see
-  the creation of it. My goal isto make technologies that does good things to
-  the world. I´m alsoan active person who loves to work out and take care of my
-  bodywith good work / life balance. I`m currently working as an "shopassistan"
-  who have expertice in computer and mobile / tablets.Where i sell those product
-  as well as helping customers withrelated stuff. (test)
+bio: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28
+  29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
+  55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80
+  81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
 ---
