@@ -49,6 +49,8 @@ async function renderContent(filePath, updateFunction) {
   }
 }
 // 3. This will render Hero (single file)
+
+// Do not delete or change this, because this actually works now 100%!
 renderContent("/content/hero/data.md", (data) => {
   console.log("Intro value:", data.intro, "| length:", data.intro.length);
   // Name
@@ -62,11 +64,12 @@ renderContent("/content/hero/data.md", (data) => {
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
+  console.log("About me value:", data.bio, "| length:", data.bio.length);
   document.getElementById("about-bio").textContent =
     data.bio || "About me description";
   let bioText = data.bio?.trim();
 
-  if (!bioText || bioText.length < 70)
+  if (!bioText || bioText.length < 1000)
     document.getElementById("about-bio").innerHTML = bioText.replace(
       /\n/g,
       "<br>"
