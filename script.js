@@ -64,11 +64,11 @@ renderContent("/content/hero/data.md", (data) => {
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
+  const bio = data.bio || "No bio from CMS loaded";
   console.log("Bio value:", data.bio, "| length:", data.bio.length);
 
   // Bio (About me)
-  document.getElementById("about-bio").textContent;
-  data.bio || "No content showing";
+  document.getElementById("about-bio").innerHTML = bio.replace(/\n/g, "<br>");
 });
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
