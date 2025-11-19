@@ -64,16 +64,11 @@ renderContent("/content/hero/data.md", (data) => {
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
-  console.log("About me value:", data.bio, "| length:", data.bio.length);
-  document.getElementById("about-bio").textContent =
-    data.bio || "About me description";
-  let bioText = data.bio?.trim();
+  console.log("Bio value:", data.bio, "| length:", data.bio.length);
 
-  if (!bioText || bioText.length < 1000)
-    document.getElementById("about-bio").innerHTML = bioText.replace(
-      /\n/g,
-      "<br>"
-    );
+  // Bio (About me)
+  document.getElementById("about-bio").textContent;
+  data.bio || "No content showing";
 });
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
