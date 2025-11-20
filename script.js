@@ -33,6 +33,7 @@ function parseFrontmatter(markdownContent) {
 
 // 2. now, this function to fetch and render a single file:
 async function renderContent(filePath, updateFunction) {
+  console.log("FilePath is reciving:", filePath);
   try {
     const response = await fetch(filePath);
     if (response.ok) {
@@ -52,28 +53,44 @@ async function renderContent(filePath, updateFunction) {
 
 // Do not delete or change this, because this actually works now 100%!
 renderContent("/content/hero/data.md", (data) => {
-  console.log("Intro value:", data.intro, "| length:", data.intro.length);
   // Name
   document.getElementById("hero-name").textContent =
     data.name || "Kristian Haugen";
 
   // Intro
-  document.getElementById("hero-intro").textContent =
-    data.intro || "No content showing";
+  const heroIntro = data.intro || data.content || "Nothing is loading";
+  // Logs content:
+  console.log(
+    "This is whats intro is loading - lenght:",
+    heroIntro.length + " sign"
+  );
+
+  // This renders the data from data.md file:
+  document.getElementById("hero-intro").innerHTML = heroIntro.replace(
+    /\n/g,
+    "<br>"
+  );
 });
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
-  const bio = data.bio || "No bio from CMS loaded";
-  console.log("Bio value:", data.bio, "| length:", data.bio.length);
+  const fullBio = data.bio || data.content || "No bio loaded";
+  // Logs what content actually gets:
+  console.log(
+    "This is whats actually laoded – lenght:",
+    fullBio.length + " sign"
+  );
 
-  // Bio (About me)
-  document.getElementById("about-bio").innerHTML = bio.replace(/\n/g, "<br>");
+  // This makes it possible to render everything that is in data.md file:
+  document.getElementById("about-bio").innerHTML = fullBio.replace(
+    /\n/g,
+    "<br>"
+  );
 });
 // 5. Render skills (list of files in folder - fetch all):
 async function renderSkills() {
   const skillsList = document.getElementById("skills-list");
-  skillsList.innerHTML = ""; // Tøm eksisterende innhold
+  skillsList.innerHTML = "";
   const staticSkills = document.querySelector(
     ".row.g-3.justify-content-center"
   );
@@ -83,6 +100,7 @@ async function renderSkills() {
     "map-skill-css-bootstrap",
     "map-skill-javascript",
     "map-skill-figma-design",
+    "map-skill-react",
   ];
   // Add container and row for centering and grid
   const container = document.createElement("div");
