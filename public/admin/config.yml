@@ -13,16 +13,17 @@ collections:
       - { label: "Navn", name: "name", widget: "string" }
       - { label: "Intro", name: "intro", widget: "markdown" }
   - name: "about"
-    label: "About Me"
+    label: "About"
     folder: "content/about"
     create: true
     slug: "data"
     fields:
-      - { label: "Bio", name: "name", widget: "markdown" }
+      - { label: "Bio", name: "Bio", widget: "markdown" }
   - name: "skills"
     label: "Skills"
     folder: "content/skills"
     create: true
+    slug: "data"
     fields:
       - { label: "Ferdighet", name: "skill", widget: "string" }
   - name: "projects"
