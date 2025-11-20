@@ -18,7 +18,7 @@ collections:
     create: true
     slug: "data"
     fields:
-      - { label: "Bio", name: "bio", widget: "markdown" }
+      - { label: "Bio", name: "body", widget: "markdown" }
   - name: "skills"
     label: "Skills"
     folder: "content/skills"
