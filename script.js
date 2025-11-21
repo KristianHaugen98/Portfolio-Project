@@ -49,9 +49,9 @@ async function renderContent(filePath, updateFunction) {
     updateFunction({}); // Call with empty data for fallback
   }
 }
-// 3. This will render Hero (single file)
 
 // Do not delete or change this, because this actually works now 100%!
+// // 3. This will render Hero (single file)
 renderContent("/content/hero/data.md", (data) => {
   // Name
   document.getElementById("hero-name").textContent =
@@ -72,7 +72,9 @@ renderContent("/content/hero/data.md", (data) => {
   );
 });
 
+// Do not edit this, as this now worsk fine!
 // 4. This will render about (single file):
+
 renderContent("/content/about/data.md", (data) => {
   const fullBio = data.name || data.bio || data.Bio || "No bio loaded";
   // Logs what content actually gets:
@@ -131,13 +133,14 @@ async function renderSkills() {
   }
 }
 renderSkills();
-
-// This will render projects (list of files in folder from GitHub
+// This will render and add the cards to the project part
+// Render projects (list of files in folder from GitHub
 //  1.
 async function fetchProjectFilesFromGitHub() {
-  const repo = "kristianhaugen98/portfolio-project";
-  const branch = "main";
-  const url = `https://api.github.com/repos/${repo}/contents/content/projects?ref=${branch}`;
+  const owner = "kristianhaugen98";
+  const repo = "Portfolio-project";
+  const path = "content/projects";
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
   try {
     const response = await fetch(url);
@@ -172,7 +175,7 @@ async function renderProjects() {
 
   for (const file of projectFiles) {
     try {
-      const response = await fetch(`/content/projects/${file}.md`);
+      const response = await fetch(`/content/Projects/${file}.md`);
       if (!response.ok) throw new Error(`Could not fetch ${file}.md`);
       const markdown = await response.text();
       const data = parseFrontmatter(markdown);
