@@ -74,7 +74,7 @@ renderContent("/content/hero/data.md", (data) => {
 
 // 4. This will render about (single file):
 renderContent("/content/about/data.md", (data) => {
-  const fullBio = data.bio || data.content || "No bio loaded";
+  const fullBio = data.name || data.bio || data.Bio || "No bio loaded";
   // Logs what content actually gets:
   console.log(
     "This is whats actually laoded – lenght:",
@@ -179,12 +179,6 @@ async function renderProjects() {
 
       const title = data.title || file;
       let description = data.description?.trim();
-
-      // If description is missing or still the old truncated one, fall back to the body
-      if (!description || description.length > 200) {
-        // data.content is the markdown body (everything after the second ---)
-        description = data.content?.trim() || "Ingen beskrivelse";
-      }
 
       description = description || "Ingen beskrivelse";
       // Just checking and controlling outcome:
