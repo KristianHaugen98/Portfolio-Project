@@ -200,7 +200,7 @@ async function renderProjects() {
           <img src="${imagePath}" class="card-img-top img-fluid" style="height: 180px" alt="${title}" />
           <div class="card-body">
             <h5 class="card-title">${title}</h5>
-            <p class="card-text">${description.length < 200(/\n/g, "<br>")}</p>
+            <p class="card-text"></p>
             <a href="${link}" class="btn btn-primary" target="_blank" rel="noopener">
               ${link !== "#" ? "Go to website" : "No link"}
             </a>
